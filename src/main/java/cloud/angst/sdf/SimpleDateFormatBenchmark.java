@@ -41,7 +41,7 @@ public class SimpleDateFormatBenchmark {
     }
 
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -50,13 +50,13 @@ public class SimpleDateFormatBenchmark {
         String value = formatter.format(date);
         Instant result = Instant.from(formatter.parse(value));
 
-        if (!date.equals(result)) {
+        if (date.toEpochMilli() != result.toEpochMilli()) {
             throw new RuntimeException("Date differs");
         }
     }
 
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -69,7 +69,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -84,7 +84,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public void synchronized_simple_date_formatter() throws ParseException {
@@ -103,7 +103,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -116,7 +116,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1)
+    @Fork
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
