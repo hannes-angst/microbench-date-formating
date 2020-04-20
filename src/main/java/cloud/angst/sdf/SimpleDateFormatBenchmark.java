@@ -8,16 +8,23 @@ import org.openjdk.jmh.annotations.Threads;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE;
-
 public class SimpleDateFormatBenchmark {
-    private static final String pattern = "yyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String pattern = "yyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+
+    static {
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     private static final ReentrantLock lock = new ReentrantLock();
 
@@ -29,8 +36,6 @@ public class SimpleDateFormatBenchmark {
         return sdf.parse(value);
     }
 
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
 
     @Fork(value = 4, warmups = 1, jvmArgsAppend = {
             "-Djava.awt.headless=true",
@@ -40,9 +45,10 @@ public class SimpleDateFormatBenchmark {
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
     public void use_DateTimeFormatter() {
-        LocalDate date = LocalDate.now();
-        String value = ISO_DATE.format(date);
-        LocalDate result = LocalDate.from(ISO_DATE.parse(value));
+        Instant date = Instant.now();
+        String value = formatter.format(date);
+        Instant result = Instant.from(formatter.parse(value));
+
         if (!date.equals(result)) {
             throw new RuntimeException("Date differs");
         }
@@ -75,6 +81,7 @@ public class SimpleDateFormatBenchmark {
     public void create_new_simple_date_formatter() throws ParseException {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String value = simpleDateFormat.format(date);
         Date result = simpleDateFormat.parse(value);
         if (!date.equals(result)) {
