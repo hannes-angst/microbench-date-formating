@@ -9,21 +9,25 @@ import org.openjdk.jmh.annotations.Threads;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SimpleDateFormatBenchmark {
-    private static final String pattern = "yyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final String pattern = "yyy-MM-dd'T'HH:mm:ss.SSSX";
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter formatter;
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 
     static {
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                .withZone(ZoneId.of("GMT"));
     }
 
     private static final ReentrantLock lock = new ReentrantLock();
@@ -37,10 +41,7 @@ public class SimpleDateFormatBenchmark {
     }
 
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -55,10 +56,7 @@ public class SimpleDateFormatBenchmark {
     }
 
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -71,10 +69,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -89,10 +84,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public void synchronized_simple_date_formatter() throws ParseException {
@@ -111,10 +103,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
@@ -127,10 +116,7 @@ public class SimpleDateFormatBenchmark {
         }
     }
 
-    @Fork(value = 4, warmups = 1, jvmArgsAppend = {
-            "-Djava.awt.headless=true",
-            "-XX:+IdleTuningCompactOnIdle",
-            "-XX:+IdleTuningGcOnIdle"})
+    @Fork(value = 4, warmups = 1)
     @Benchmark
     @Threads(Threads.MAX)
     @BenchmarkMode(Mode.Throughput)
